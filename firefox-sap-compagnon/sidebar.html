@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title data-i18n>Compagnon SAP Fiori — panel</title>
+<link rel="stylesheet" href="ui.css">
+<link rel="stylesheet" href="popup.css">
+</head>
+<body class="side">
+<header>
+  <h1>Compagnon SAP Fiori</h1>
+  <button class="btn sm" id="side" title="Keep the panel open while you use the application" data-i18n-title data-i18n>Sidebar</button>
+  <button class="btn sm" id="reload" title="Reload the tab, ignoring the browser cache" data-i18n-title data-i18n>Reload without cache</button>
+  <button class="btn sm" id="opts" data-i18n>Options</button>
+</header>
+<div id="env"></div>
+<div id="simbar" class="simbar" role="alert" hidden></div>
+<nav role="tablist">
+  <button role="tab" id="tab-app" aria-selected="true" data-i18n>Application</button>
+  <button role="tab" id="tab-errors" aria-selected="false" data-i18n>Errors</button>
+  <button role="tab" id="tab-log" aria-selected="false" data-i18n>Log</button>
+  <button role="tab" id="tab-inspect" aria-selected="false" data-i18n>Inspector</button>
+  <button role="tab" id="tab-sim" aria-selected="false" data-i18n>Simulate</button>
+</nav>
+<main id="main"></main>
+<script src="compat.js"></script>
+<script src="i18n.js"></script>
+<script src="shared.js"></script>
+<script src="popup.js"></script>
+</body>
+</html>

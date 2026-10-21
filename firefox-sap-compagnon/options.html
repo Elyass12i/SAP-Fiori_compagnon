@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Compagnon SAP Fiori — Options</title>
+<link rel="stylesheet" href="ui.css">
+<style>
+  body{max-width:1040px;margin:0 auto;padding:24px 16px 60px}
+  h1{font-size:22px;margin-bottom:4px}
+  section{margin-top:24px;display:flex;flex-direction:column;gap:10px}
+  h2{font-size:15px}
+  .rule{display:grid;grid-template-columns:auto 100px 36px minmax(0,1fr) minmax(0,1fr) 70px 34px auto;gap:8px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:8px}
+  .rule label{display:flex;align-items:center;gap:4px}
+  .head{display:grid;grid-template-columns:auto 100px 36px minmax(0,1fr) minmax(0,1fr) 70px 34px auto;gap:8px;padding:0 9px;color:var(--muted);font-size:12px}
+  @media (max-width:640px){.rule,.head{grid-template-columns:1fr 1fr}.head{display:none}}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  #saved{color:var(--ok);font-weight:600}
+  .result{padding:8px 10px;border-radius:6px;background:var(--panel)}
+</style>
+</head>
+<body>
+<h1>Compagnon SAP Fiori</h1>
+<p class="muted" data-i18n>Settings are stored in this Firefox profile only.</p>
+
+<section>
+  <h2 data-i18n>Environments</h2>
+  <p class="muted" style="margin:0"><span data-i18n>A rule matches a page by </span><b data-i18n>text contained in its URL</b><span data-i18n> (for example a host name), or by a regular expression written between slashes, such as </span><span class="mono">/sap-dev|:44300/</span><span data-i18n>. The SAP client is optional: if it is filled in, the URL must contain </span><span class="mono">sap-client=</span><span data-i18n> with that value. The first matching rule wins. The </span><b data-i18n>system URL</b><span data-i18n> (optional) is the address of this environment’s system, for example </span><span class="mono" data-i18n>https://sap-dev.example.com:44300</span><span data-i18n>: it is used by the version comparison, the “Open in” buttons and the SAP log links. </span><b data-i18n>Sim.</b><span data-i18n> allows error simulation on the environment: tick it only for development systems.</span></p>
+  <div class="head"><span data-i18n>On</span><span data-i18n>Name</span><span data-i18n>Colour</span><span data-i18n>URL text or /regex/</span><span data-i18n>System URL</span><span data-i18n>SAP client</span><span data-i18n title="Error simulation allowed" data-i18n-title>Sim.</span><span></span></div>
+  <div id="rules"></div>
+  <div class="row">
+    <button class="btn" id="add" data-i18n>Add a rule</button>
+    <button class="btn" data-preset="0" data-i18n>+ DEV (green)</button>
+    <button class="btn" data-preset="1" data-i18n>+ ACC (yellow)</button>
+    <button class="btn" data-preset="2" data-i18n>+ PROD (red)</button>
+  </div>
+</section>
+
+<section>
+  <h2 data-i18n>Display</h2>
+  <label class="row"><span style="width:180px" data-i18n>Interface language</span>
+    <select id="lang"><option value="en">English</option><option value="fr">Français</option></select></label>
+  <label class="row"><span style="width:180px" data-i18n>Label position</span>
+    <select id="pos"><option value="top" data-i18n>Top of the page</option><option value="bottom" data-i18n>Bottom of the page</option></select></label>
+  <label class="row"><input type="checkbox" id="title"> <span data-i18n>Prefix the tab title, for example “[PROD] My application”</span></label>
+  <label class="row"><input type="checkbox" id="toasts"> <span data-i18n>Show a notification in the page for each OData error</span></label>
+  <label class="row"><input type="checkbox" id="inspectAlt"> <span data-i18n>Alt+click on an element of a SAPUI5 application opens the control inspector</span></label>
+</section>
+
+<section>
+  <h2 data-i18n>Test a URL</h2>
+  <div class="row"><input type="url" id="testUrl" style="flex:1" placeholder="Paste a URL of your SAP system" data-i18n-placeholder><button class="btn" id="test" data-i18n>Test</button></div>
+  <div class="result" id="testResult" hidden></div>
+</section>
+
+<section>
+  <div class="row"><button class="btn primary" id="save" data-i18n>Save</button><span id="saved" hidden></span></div>
+</section>
+<script src="compat.js"></script>
+<script src="i18n.js"></script>
+<script src="shared.js"></script>
+<script src="options.js"></script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <clipPath id="c"><rect width="128" height="128" rx="28"/></clipPath>
+  </defs>
+  <g clip-path="url(#c)">
+    <rect width="128" height="128" fill="#1b1d1f"/>
+    <rect y="0" width="43" height="16" fill="#2e7d32"/>
+    <rect x="43" y="0" width="42" height="16" fill="#f9a825"/>
+    <rect x="85" y="0" width="43" height="16" fill="#c62828"/>
+  </g>
+  <g fill="none" stroke="#f0efec" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M47 30 C37 30 37 38 37 45 L37 51 C37 56 33 59 27 59 C33 59 37 62 37 67 L37 73 C37 80 37 88 47 88"/>
+    <path d="M81 30 C91 30 91 38 91 45 L91 51 C91 56 95 59 101 59 C95 59 91 62 91 67 L91 73 C91 80 91 88 81 88"/>
+  </g>
+  <circle cx="61" cy="56" r="11.5" fill="none" stroke="#f9a825" stroke-width="7.5"/>
+  <path d="M69.5 64.5 L77 72" stroke="#f9a825" stroke-width="8.5" stroke-linecap="round"/>
+  <text x="64" y="113" text-anchor="middle" font-family="'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="600" letter-spacing="1.5" fill="#f0efec" fill-opacity="0.82">Elyass</text>
+</svg>

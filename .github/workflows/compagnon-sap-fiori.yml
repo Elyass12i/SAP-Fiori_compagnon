@@ -1,0 +1,106 @@
+# Checks and builds the "Compagnon SAP Fiori" extension for Firefox and Chrome / Edge. For Firefox, if the AMO keys
+# are configured, has it signed by Mozilla (unlisted), then publishes it as a release and in the repository.
+name: Compagnon SAP Fiori
+
+on:
+  push:
+    paths:
+      - 'firefox-sap-compagnon/**'
+      - 'chrome/**'
+      - 'installer-chrome/**'
+      - '.github/workflows/compagnon-sap-fiori.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: compagnon-sap-fiori-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  extension:
+    runs-on: ubuntu-latest
+    env:
+      SRC: firefox-sap-compagnon
+      HAS_AMO_KEYS: ${{ secrets.AMO_JWT_ISSUER != '' && secrets.AMO_JWT_SECRET != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Check the extension (web-ext lint)
+        run: npx --yes web-ext@8.10.0 lint --source-dir "$SRC"
+
+      - name: Read the version
+        id: v
+        run: echo "version=$(jq -r .version "$SRC/manifest.json")" >> "$GITHUB_OUTPUT"
+
+      - name: Build the unsigned package
+        run: npx --yes web-ext@8.10.0 build --source-dir "$SRC" --artifacts-dir build --overwrite-dest
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: compagnon-sap-fiori-${{ steps.v.outputs.version }}-unsigned
+          path: build/*.zip
+
+      - name: Build the Chrome package and check that the committed one is up to date
+        run: |
+          mkdir -p build/chrome-committed
+          unzip -q installer-chrome/compagnon-sap-fiori-chrome.zip -d build/chrome-committed
+          node chrome/build.js --dir build/chrome-new
+          if ! diff -r build/chrome-new build/chrome-committed; then
+            echo "::error::installer-chrome/compagnon-sap-fiori-chrome.zip is out of date: run 'node chrome/build.js' and commit it."
+            exit 1
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: compagnon-sap-fiori-${{ steps.v.outputs.version }}-chrome
+          path: installer-chrome/compagnon-sap-fiori-chrome.zip
+
+      - name: Is this version already published?
+        id: rel
+        if: env.HAS_AMO_KEYS == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "compagnon-sap-fiori-v${{ steps.v.outputs.version }}" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Sign with Mozilla (unlisted)
+        if: env.HAS_AMO_KEYS == 'true' && steps.rel.outputs.exists == 'false'
+        env:
+          WEB_EXT_API_KEY: ${{ secrets.AMO_JWT_ISSUER }}
+          WEB_EXT_API_SECRET: ${{ secrets.AMO_JWT_SECRET }}
+        run: npx --yes web-ext@8.10.0 sign --source-dir "$SRC" --channel unlisted --artifacts-dir signed
+
+      - name: Publish the release and store the signed package in the repository
+        if: env.HAS_AMO_KEYS == 'true' && steps.rel.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VER: ${{ steps.v.outputs.version }}
+        run: |
+          XPI=$(ls signed/*.xpi | head -n 1)
+          OUT="installer-firefox/compagnon-sap-fiori.xpi"
+          mkdir -p installer-firefox
+          git rm -q --ignore-unmatch installer-firefox/*.xpi
+          cp "$XPI" "$OUT"
+          gh release create "compagnon-sap-fiori-v$VER" "$OUT" --target "$GITHUB_SHA" \
+            --title "Compagnon SAP Fiori $VER" \
+            --notes "Firefox extension signed by Mozilla (unlisted distribution). Installation: firefox-sap-compagnon/README.md."
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add installer-firefox
+          git commit -m "Compagnon SAP Fiori $VER: package signed by Mozilla"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+      - name: Reminder if signing is not configured
+        if: env.HAS_AMO_KEYS != 'true'
+        run: |
+          echo "::notice::Signing not configured: add the AMO_JWT_ISSUER and AMO_JWT_SECRET secrets (see firefox-sap-compagnon/README.md). The unsigned package is available in the artifacts of this run."

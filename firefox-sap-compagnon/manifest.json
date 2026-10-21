@@ -1,0 +1,116 @@
+{
+  "manifest_version": 3,
+  "name": "Compagnon SAP Fiori",
+  "version": "1.6.0",
+  "description": "Environment banner, OData errors explained by the $metadata, OData log, control inspector and environment comparison for SAPUI5 / Fiori.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "compagnon-sap-fiori@cloud-rep.local",
+      "strict_min_version": "128.0",
+      "data_collection_permissions": {
+        "required": [
+          "none"
+        ]
+      }
+    }
+  },
+  "icons": {
+    "16": "icons/icon.svg",
+    "32": "icons/icon.svg",
+    "48": "icons/icon.svg",
+    "64": "icons/logo.svg",
+    "96": "icons/logo.svg",
+    "128": "icons/logo.svg"
+  },
+  "permissions": [
+    "storage",
+    "tabs",
+    "scripting",
+    "webRequest",
+    "webRequestBlocking",
+    "webRequestFilterResponse",
+    "clipboardWrite"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "scripts": [
+      "compat.js",
+      "i18n.js",
+      "shared.js",
+      "background.js"
+    ]
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "sim-page.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": true,
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "early.js",
+        "compat.js",
+        "sim-bridge.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": true
+    },
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "compat.js",
+        "i18n.js",
+        "shared.js",
+        "content.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false
+    },
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "inspect.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ],
+  "action": {
+    "default_title": "Compagnon SAP Fiori",
+    "default_popup": "popup.html",
+    "default_icon": "icons/icon.svg"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "sidebar_action": {
+    "default_panel": "sidebar.html",
+    "default_title": "Compagnon SAP Fiori",
+    "default_icon": "icons/icon.svg",
+    "open_at_install": false
+  },
+  "commands": {
+    "_execute_sidebar_action": {
+      "suggested_key": {
+        "default": "Alt+Shift+O"
+      },
+      "description": "Show or hide the sidebar"
+    }
+  }
+}
